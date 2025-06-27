@@ -1,0 +1,6 @@
+framework module Pods_ChooseToBeCurious {
+  umbrella header "Pods-ChooseToBeCurious-umbrella.h"
+
+  export *
+  module * { export * }
+}

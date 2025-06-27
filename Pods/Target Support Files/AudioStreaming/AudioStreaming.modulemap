@@ -1,0 +1,6 @@
+framework module AudioStreaming {
+  umbrella header "AudioStreaming-umbrella.h"
+
+  export *
+  module * { export * }
+}

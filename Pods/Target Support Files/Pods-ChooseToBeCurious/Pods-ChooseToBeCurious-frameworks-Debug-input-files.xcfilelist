@@ -1,0 +1,6 @@
+${PODS_ROOT}/Target Support Files/Pods-ChooseToBeCurious/Pods-ChooseToBeCurious-frameworks.sh
+${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework
+${BUILT_PRODUCTS_DIR}/AudioStreaming/AudioStreaming.framework
+${BUILT_PRODUCTS_DIR}/FeedKit/FeedKit.framework
+${BUILT_PRODUCTS_DIR}/Spring/Spring.framework
+${PODS_XCFRAMEWORKS_BUILD_DIR}/TuneURL/TuneURL.framework/TuneURL

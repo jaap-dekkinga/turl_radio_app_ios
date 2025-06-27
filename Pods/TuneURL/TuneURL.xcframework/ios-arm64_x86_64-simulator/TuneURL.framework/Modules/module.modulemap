@@ -1,0 +1,11 @@
+framework module TuneURL {
+  umbrella header "TuneURL.h"
+
+  export *
+  module * { export * }
+}
+
+module TuneURL.Swift {
+    header "TuneURL-Swift.h"
+    requires objc
+}
