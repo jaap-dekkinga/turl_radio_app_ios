@@ -64,10 +64,8 @@ class StationsViewController: BaseController, Handoffable {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = true
         
-        // NavigationBar items
-        //navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(handleMenuTap))
-        //navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backTapped))
-        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "icon-hamburger"), style: .plain, target: self, action: #selector(handleMenuTap))
+
         // Setup Player
         player.addObserver(self)
         manager.addObserver(self)
@@ -93,10 +91,6 @@ class StationsViewController: BaseController, Handoffable {
         title = "Swift Radio"
     }
 
-    @objc func backTapped() {
-        navigationController?.popViewController(animated: true)
-    }
-    
     @objc func refresh(sender: AnyObject) {
         // Pull to Refresh
         manager.fetch()

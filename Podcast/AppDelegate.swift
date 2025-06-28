@@ -19,28 +19,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		UIApplication.shared.delegate as! AppDelegate
 	}()
 
-	static var documentsURL: URL = {
-		// get the documents folder
-		guard let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
-			return URL(fileURLWithPath: NSTemporaryDirectory())
-		}
-		return url
-	}()
-
-	static var uniqueID: String = {
-		// get the uuid
-		if let uuid = UserDefaults.standard.string(forKey: "Unique ID") {
-			return uuid
-		}
-		// create a new uuid
-		let uuid = UUID().uuidString
-		UserDefaults.standard.set(uuid, forKey: "Unique ID")
-		return uuid
-	}()
-
 	// public
 	var window: UIWindow?
-    var navigationController: UINavigationController?
     var coordinator: MainCoordinator?
 
     // CarPlay
@@ -50,28 +30,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]?) -> Bool {
         setupTuneURLTrigger()
-        setupAppearance()
         
         setupRadio()
                         
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let rootVC = storyboard.instantiateInitialViewController()
-
-        let nav = UINavigationController(rootViewController: rootVC ?? UIViewController())
-        nav.isNavigationBarHidden = true
-        navigationController = nav
-
-        coordinator = MainCoordinator(navigationController: nav)
+        coordinator = MainCoordinator(navigationController: UINavigationController())
         
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = navigationController
+        window?.rootViewController = coordinator?.navigationController
         window?.makeKeyAndVisible()
+        
+        coordinator?.start()
         
         return true
     }
         
 	func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
-		API.shared.clearCache()
 	}
     
     func applicationWillTerminate(_ application: UIApplication) {
@@ -83,20 +56,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
 	// MARK: - Private
-
-	private func setupAppearance() {
-		// setup the navigation bar appearance
-		UINavigationBar.appearance().prefersLargeTitles = true
-		// setup the tab bar appearance
-		let tabBarAppearance = UITabBarAppearance()
-		tabBarAppearance.configureWithTransparentBackground()
-		tabBarAppearance.backgroundColor = .clear
-		tabBarAppearance.backgroundEffect = nil
-		UITabBar.appearance().standardAppearance = tabBarAppearance
-		if #available(iOS 15.0, *) {
-			UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
-		}
-	}
 
 	private func setupTuneURLTrigger() {
 		guard let url = Bundle.main.url(forResource: "Trigger-Sound", withExtension: "wav") else {
@@ -116,6 +75,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         activateAudioSession()
         setupRemoteCommandCenter()
         UIApplication.shared.beginReceivingRemoteControlEvents()
+        
+        // Make status bar white
+        UINavigationBar.appearance().barStyle = .black
+        UINavigationBar.appearance().tintColor = .white
+        UINavigationBar.appearance().prefersLargeTitles = true
                 
         // `CarPlay` is defined only in SwiftRadio-CarPlay target:
         // Build Settings > Swift Compiler - Custom Flags

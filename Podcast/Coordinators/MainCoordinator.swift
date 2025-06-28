@@ -16,8 +16,7 @@ class MainCoordinator: NavigationCoordinator {
     func start() {
         let loaderVC = LoaderController()
         loaderVC.delegate = self
-        navigationController.isNavigationBarHidden = false
-        navigationController.pushViewController(loaderVC, animated: true)
+        navigationController.setViewControllers([loaderVC], animated: false)
     }
     
     init(navigationController: UINavigationController) {
@@ -58,14 +57,7 @@ extension MainCoordinator: LoaderControllerDelegate {
     func didFinishLoading(_ controller: LoaderController, stations: [RadioStation]) {
         let stationsVC = StationsViewController()
         stationsVC.delegate = self
-        
-        var vcs = navigationController.viewControllers
-        if vcs.count > 0 {
-            vcs[vcs.count - 1] = stationsVC
-            navigationController.setViewControllers(vcs, animated: false)
-        } else {
-            navigationController.pushViewController(stationsVC, animated: false)
-        }
+        navigationController.setViewControllers([stationsVC], animated: false)
     }
 }
 
@@ -75,7 +67,6 @@ extension MainCoordinator: StationsViewControllerDelegate {
     
     func pushNowPlayingController(_ stationsViewController: StationsViewController, newStation: Bool) {
         let nowPlayingController = Storyboard.viewController as NowPlayingViewController
-        nowPlayingController.hidesBottomBarWhenPushed = true
         nowPlayingController.delegate = self
         nowPlayingController.isNewStation = newStation
         navigationController.pushViewController(nowPlayingController, animated: true)
