@@ -1,0 +1,4 @@
+${PODS_ROOT}/Target Support Files/Pods-radio_app/Pods-radio_app-frameworks.sh
+${BUILT_PRODUCTS_DIR}/AudioStreaming/AudioStreaming.framework
+${BUILT_PRODUCTS_DIR}/Spring/Spring.framework
+${PODS_XCFRAMEWORKS_BUILD_DIR}/TuneURL/TuneURL.framework/TuneURL

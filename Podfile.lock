@@ -1,22 +1,16 @@
 PODS:
-  - Alamofire (4.9.1)
   - AudioStreaming (1.2.6)
-  - FeedKit (9.1.2)
   - Spring (1.0.6)
   - TuneURL (1.1.1)
 
 DEPENDENCIES:
-  - Alamofire (~> 4.9.0)
   - AudioStreaming
-  - FeedKit (~> 9.1.0)
   - Spring (from `https://github.com/MengTo/Spring.git`)
   - TuneURL
 
 SPEC REPOS:
   trunk:
-    - Alamofire
     - AudioStreaming
-    - FeedKit
     - TuneURL
 
 EXTERNAL SOURCES:
@@ -29,12 +23,10 @@ CHECKOUT OPTIONS:
     :git: https://github.com/MengTo/Spring.git
 
 SPEC CHECKSUMS:
-  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
   AudioStreaming: cfc8989b3573e4cedb937d0b18dfb096b53fff8f
-  FeedKit: 71653273ab08e618cd6fd1301ca08fc02dca6a9e
   Spring: 3d113f14575ef79aec9c5f906dfa4f5001c03254
   TuneURL: 80f36c00915401c6286d7bdc1c32658488bf73aa
 
-PODFILE CHECKSUM: 51598673b2041bb35299e436bb14f960f93558f2
+PODFILE CHECKSUM: ba798cb6d8633c7949a064b1d5d5ad00083d374d
 
 COCOAPODS: 1.15.2
