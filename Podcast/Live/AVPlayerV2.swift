@@ -227,18 +227,18 @@ extension AVPlayerV2 {
 extension AVPlayerV2: AudioPlayerDelegate {
     
     func audioPlayerDidStartPlaying(player: AudioStreaming.AudioPlayer, with entryId: AudioStreaming.AudioEntryId) {
-        print("didStartPlaying")
+        //print("didStartPlaying")
         
         playerItem?.status = .readyToPlay
     }
     
     func audioPlayerDidFinishBuffering(player: AudioStreaming.AudioPlayer, with entryId: AudioStreaming.AudioEntryId) {
-        print("didFinishBuffering")
+        //print("didFinishBuffering")
         
     }
     
     func audioPlayerStateChanged(player: AudioStreaming.AudioPlayer, with newState: AudioStreaming.AudioPlayerState, previous: AudioStreaming.AudioPlayerState) {
-        print("didFinishBuffering")
+        //print("didFinishBuffering")
         
         if newState == .error {
             playerItem?.status = .failed
@@ -248,23 +248,23 @@ extension AVPlayerV2: AudioPlayerDelegate {
     }
     
     func audioPlayerDidFinishPlaying(player: AudioStreaming.AudioPlayer, entryId: AudioStreaming.AudioEntryId, stopReason: AudioStreaming.AudioPlayerStopReason, progress: Double, duration: Double) {
-        print("didFinishPlaying")
+        //print("didFinishPlaying")
         rate = 0
     }
     
     func audioPlayerUnexpectedError(player: AudioStreaming.AudioPlayer, error: AudioStreaming.AudioPlayerError) {
-        print("unexpectedError")
+        //print("unexpectedError")
         
         playerItem?.status = .failed
     }
     
     func audioPlayerDidCancel(player: AudioStreaming.AudioPlayer, queuedItems: [AudioStreaming.AudioEntryId]) {
-        print("didCancel", queuedItems)
+        //print("didCancel", queuedItems)
         
     }
     
     func audioPlayerDidReadMetadata(player: AudioStreaming.AudioPlayer, metadata: [String : String]) {
-        print("didReadMetadata", metadata)
+        //print("didReadMetadata", metadata)
         
         
         if let streamTitle = metadata["StreamTitle"] {

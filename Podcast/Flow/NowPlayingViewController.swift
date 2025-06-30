@@ -327,7 +327,18 @@ extension NowPlayingViewController: FRadioPlayerObserver {
     }
     
     func radioPlayer(_ player: FRadioPlayer, tuneAvailable tuneURL: [TuneURL.Match]) {
-        openInterests(tuneURL[0])
+        let match = tuneURL[0]
+
+        print("TuneURL active:")
+        print("\tname: \(match.name)")
+        print("\tdescription: \(match.description)")
+        print("\tid: \(match.id)")
+        print("\tinfo: \(match.info)")
+        print("\tmatchPercentage: \(match.matchPercentage)")
+        print("\ttime: \(match.time)")
+        print("\ttype: \(match.type)")
+        
+        openInterests(match)
     }
 }
 

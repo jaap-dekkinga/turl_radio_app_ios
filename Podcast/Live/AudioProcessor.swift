@@ -17,8 +17,9 @@ protocol AudioProcessorDelegate: NSObjectProtocol {
 final class AudioProcessor {
     
     private let syncQueue = DispatchQueue(label: "audio.processor", qos: .background)
-    private let maxSegmentDuration: TimeInterval = 30
-    private let minSegmentDuration: TimeInterval = 7
+    private let maxSegmentDuration: TimeInterval = 15
+    private let minSegmentDuration: TimeInterval = 9
+    
     private let silenceStartDuration: TimeInterval = 1
     private let silenceEndDuration: TimeInterval = 1
     
@@ -33,7 +34,6 @@ final class AudioProcessor {
     private var possibleTrigger = false
 
     private var speechActive = false
-    private var speechStart: TimeInterval = 0
 
     private var frames: AVAudioFrameCount = 0
         
@@ -89,9 +89,9 @@ extension AudioProcessor {
         isRunning = true
         let buffer = tasks.removeFirst()
         
-        DispatchQueue.global().async {
-            self.processBuffer(buffer)
+        self.processBuffer(buffer)
             
+        DispatchQueue.global().async {
             self.syncQueue.async {
                 self.executeNext()
             }
@@ -100,17 +100,14 @@ extension AudioProcessor {
     
     private func processBuffer(_ buffer: AVAudioPCMBuffer) {
         if !AudioProcessorUtils.isSilent(buffer) {
-            var speechDuration = TimeInterval(0)
-            
-            if speechStart == 0 {
-                speechStart = Date().timeIntervalSince1970
-            } else {
-                speechDuration = Date().timeIntervalSince1970 - speechStart
-            }
-            
             if !speechActive {
-                resetBuffer()
+                if !possibleTrigger {
+                    print("v2 speech pre reset:")
+
+                    resetBuffer()
+                }
                 
+                print("v2 speech start:")
                 speechActive = true
             }
             
@@ -118,47 +115,52 @@ extension AudioProcessor {
             
             let bufferDuration = duration()
             
-            if possibleTrigger && speechDuration > minSegmentDuration {
-                print("v2 mid speech commit:", speechDuration)
-                commit()
-                
+            if possibleTrigger {
+                if bufferDuration > minSegmentDuration {
+                    print("v2 speech mid commit:", bufferDuration)
+                    commit()
+                }
             } else if bufferDuration > maxSegmentDuration {
-                print("v2 over speech reset:", bufferDuration)
-                //commit()
-                resetBuffer()
-
+                print("v2 speech buffer overflow commit:", bufferDuration)
+                
+                commit()
             }
-            
         } else {
             let bufferDuration = duration()
-            
-            if speechStart > 0 {
-                let speechDuration = Date().timeIntervalSince1970 - speechStart
 
-                if (!possibleTrigger && speechDuration > 1 && speechDuration < 2) {
-                    print("v2 possible triger", speechDuration)
-
-                    possibleTrigger = true
-                }
+            if speechActive {
+                speechActive = false
+                print("v2 speech done:", bufferDuration)
                 
-                speechStart = 0
-            }
-            
-            if bufferDuration > maxSegmentDuration {
-                print("v2 over silence reset:", bufferDuration)
-                //commit()
-                resetBuffer()
+                if bufferDuration > 1 && bufferDuration < 2 {
+                    possibleTrigger = true
+
+                    print("v2 silence after possible trigger", bufferDuration)
+                } else if bufferDuration > maxSegmentDuration {
+                    print("v2 silence after buffer overflow commit:", bufferDuration)
+                    
+                    commit()
+                }
             }
         }
             
     }
     
     private func commit() {
-        commitBuffer()
+        print("")
+        print("v2 commit:")
+
+        frames = 0
+
+        let fileUrl = directory.appendingPathComponent("buffer.mp4")
+        
+        _ = autoreleasepool {
+            flushBuffer(fileUrl)
+        }
         
         possibleTrigger = false
-        speechActive = false
-        speechStart = 0
+
+        detectTune(fileUrl)
     }
             
 }
@@ -170,31 +172,14 @@ extension AudioProcessor {
     }
     
     func resetBuffer() {
-        print("")
-        print("v2 prepare:")
-        
         frames = 0
         outQueue.removeAll()
-        print("")
     }
     
     func addBuffer(_ buffer: AVAudioPCMBuffer) {
         outQueue.append(buffer)
         
         frames += buffer.frameLength
-    }
-    
-    func commitBuffer() {
-        print("")
-        print("v2 commit:")
-                
-        let fileUrl = directory.appendingPathComponent("buffer.mp4")
-        
-        _ = autoreleasepool {
-            flushBuffer(fileUrl)
-        }
-        
-        self.detectTune(fileUrl)
     }
     
     private func flushBuffer(_ fileUrl: URL) -> Bool {
@@ -205,7 +190,7 @@ extension AudioProcessor {
             return false
         }
         
-        print("v2 flush:", fileUrl)
+        //print("v2 flush:", fileUrl.path)
         
         if let silenceBuffer = AudioProcessorUtils.makeSilentBuffer(format, duration: silenceStartDuration) {
             try? audioWriter.write(from: silenceBuffer)
@@ -214,6 +199,7 @@ extension AudioProcessor {
         outQueue.forEach { buffer in
             try? audioWriter.write(from: buffer)
         }
+        
         outQueue.removeAll()
         
         if let silenceBuffer = AudioProcessorUtils.makeSilentBuffer(format, duration: silenceEndDuration) {
@@ -255,6 +241,7 @@ extension AudioProcessor {
             }
         }
     }
+    
 }
 
 extension AudioProcessor {
